@@ -10,11 +10,26 @@ from config import ACCESS_TOKEN_EXPIRE_MINUTES
 from sql_app.auth import get_current_active_user, authenticate_user, create_access_token
 from . import crud, models, schemas
 from .database import engine, get_db
+from fastapi.middleware.cors import CORSMiddleware
 
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
+
+origins = [
+    "http://localhost",
+    "http://localhost:8000",
+    "http://corona-meldung.s3-website.eu-central-1.amazonaws.com"
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 @app.post("/token", response_model=schemas.Token)
