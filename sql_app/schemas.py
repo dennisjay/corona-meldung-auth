@@ -5,14 +5,18 @@ class UserBase(BaseModel):
     email: str
 
 
+class UserActivation(UserBase):
+    activation_key: int
+
+
+class UserLogin(UserBase):
+    login_token: int
+
+
 class User(UserBase):
     id: int
     is_active: bool
     jwk_key: str
-
-
-class UserActivation(UserBase):
-    activation_key: int
 
 
 class Token(BaseModel):

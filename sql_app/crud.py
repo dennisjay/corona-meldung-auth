@@ -1,6 +1,7 @@
 from random import randint
 from sqlalchemy.orm import Session
 from jwcrypto import jwk
+from datetime import datetime
 
 from . import models, schemas
 
@@ -32,6 +33,21 @@ def create_user(db: Session, user: schemas.UserBase):
 def activate_user(db: Session, db_user: models.User):
     db_user.is_active = True
     db_user.activation_key = 0
+    db.commit()
+    db.refresh(db_user)
+    return db_user
+
+
+def prepare_login(db: Session, db_user: models.User, login_token: str):
+    db_user.login_token = login_token
+    db_user.timestamp_log_in_token = datetime.now()
+    return db_user
+
+
+def login_user(db: Session, db_user: models.User):
+    db_user.logged_in = True
+    db_user.login_token = ''
+    db_user.timestamp_log_in_token = datetime.min()
     db.commit()
     db.refresh(db_user)
     return db_user

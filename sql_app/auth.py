@@ -5,6 +5,7 @@ from fastapi import Depends, FastAPI, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jwt import PyJWTError
 from passlib.context import CryptContext
+from random_word import RandomWords
 
 from sql_app import schemas
 from sql_app.database import SessionLocal, get_db
@@ -70,8 +71,14 @@ async def get_current_user(token: str = Depends(oauth2_scheme), db= Depends(get_
     return db_user
 
 
-
 async def get_current_active_user(current_user: User = Depends(get_current_user)):
     if not current_user.is_active:
         raise HTTPException(status_code=400, detail="Inactive user")
     return current_user
+
+
+def create_login_token():
+    generator = RandomWords()
+    random_words = generator.get_random_words(limit=4)
+    login_token = '-'.join(random_words)
+    return login_token

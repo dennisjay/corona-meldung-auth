@@ -1,4 +1,4 @@
-from datetime import timedelta
+from datetime import timedelta, datetime
 from typing import List
 
 from fastapi import Depends, FastAPI, HTTPException
@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 from starlette import status
 
 from config import ACCESS_TOKEN_EXPIRE_MINUTES
-from sql_app.auth import get_current_active_user, authenticate_user, create_access_token
+from sql_app.auth import get_current_active_user, authenticate_user, create_access_token, create_login_token
 from . import crud, models, schemas
 from .database import engine, get_db
 from fastapi.middleware.cors import CORSMiddleware
@@ -61,6 +61,43 @@ def confirm_user(user: schemas.UserActivation, db: Session = Depends(get_db)):
 
     # Check if activation worked
     if crud.activate_user(db=db, db_user=db_user):
+        return schemas.User(id=db_user.id, email=db_user.email, is_active=db_user.is_active, jwk_key=db_user.jwk_key)
+    else:
+        raise HTTPException(status_code=400, detail="Could not activate user")
+
+
+@app.post("/login", response_model=schemas.UserBase)
+def login_user(user: schemas.UserBase, db: Session = Depends(get_db)):
+    db_user = crud.get_user_by_email(db, email=user.email)
+    if not db_user:
+        raise HTTPException(status_code=400, detail="Email not registered")
+
+    # Set login token in db and sent via Email
+    login_token = create_login_token()
+    crud.prepare_login(db=db, db_user=db_user, login_token=login_token)
+    print(login_token)
+
+    return schemas.UserBase(email=db_user.email)
+
+
+@app.post("confirm_login", response_model=schemas.User)
+def confirm_login(user: schemas.UserLogin, db: Session = Depends(get_db)):
+    db_user = crud.get_user_by_email(db, email=user.email)
+
+    # Check if user exists and has been activated before
+    if not db_user:
+        raise HTTPException(status_code=400, detail="Email not registered")
+    elif not db_user.is_active:
+        raise HTTPException(status_code=400, detail="User not yet activated")
+
+    # Check if login token is valid and not expired
+    if not user.login_token == '' or not user.login_token == db_user.login_token:
+        raise HTTPException(status_code=400, detail="Login token not valid")
+    elif datetime.now() - db_user.timestamp_log_in_token > timedelta(minutes=15):
+        raise HTTPException(status_code=400, detail="Login token has expired")
+
+    # Check if login worked
+    if crud.login_user(db=db, db_user=db_user):
         return schemas.User(id=db_user.id, email=db_user.email, is_active=db_user.is_active, jwk_key=db_user.jwk_key)
     else:
         raise HTTPException(status_code=400, detail="Could not activate user")
