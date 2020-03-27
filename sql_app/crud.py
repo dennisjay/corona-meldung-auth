@@ -1,3 +1,4 @@
+from random import randint
 from sqlalchemy.orm import Session
 from jwcrypto import jwk
 
@@ -19,9 +20,18 @@ def get_users(db: Session, skip: int = 0, limit: int = 100):
 def create_user(db: Session, user: schemas.UserBase):
     key = jwk.JWK.generate(kty='oct', size=256)
     key_json_str = key.export()
+    activation_key = randint(1000, 9999)
 
-    db_user = models.User(email=user.email, jwk_key=key_json_str)
+    db_user = models.User(email=user.email, jwk_key=key_json_str, activation_key=activation_key)
     db.add(db_user)
+    db.commit()
+    db.refresh(db_user)
+    return db_user
+
+
+def activate_user(db: Session, db_user: models.User):
+    db_user.is_active = True
+    db_user.activation_key = 0
     db.commit()
     db.refresh(db_user)
     return db_user

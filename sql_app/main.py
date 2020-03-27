@@ -32,6 +32,40 @@ app.add_middleware(
 )
 
 
+@app.post("/register", response_model=schemas.UserActivation)
+def register_user(user: schemas.UserBase, db: Session = Depends(get_db)):
+    db_user = crud.get_user_by_email(db, email=user.email)
+    if db_user:
+        raise HTTPException(status_code=400, detail="Email already registered")
+    db_user = crud.create_user(db=db, user=user)
+
+    # Sent Email with verification code to use in confirm_user()
+    activation_key = db_user.activation_key
+
+    return schemas.UserActivation(email=db_user.email, activation_key=db_user.activation_key)
+
+
+@app.post("/confirm", response_model=schemas.User)
+def confirm_user(user: schemas.UserActivation, db: Session = Depends(get_db)):
+    db_user = crud.get_user_by_email(db, email=user.email)
+
+    # Check if user exists or has been activated before
+    if not db_user:
+        raise HTTPException(status_code=400, detail="Email not registered")
+    elif db_user.is_active:
+        raise HTTPException(status_code=400, detail="User already activated")
+
+    # Check if activation key is valid
+    if not user.activation_key == db_user.activation_key:
+        raise HTTPException(status_code=400, detail="Activation key not valid")
+
+    # Check if activation worked
+    if crud.activate_user(db=db, db_user=db_user):
+        return schemas.User(id=db_user.id, email=db_user.email, is_active=db_user.is_active, jwk_key=db_user.jwk_key)
+    else:
+        raise HTTPException(status_code=400, detail="Could not activate user")
+
+
 @app.post("/token", response_model=schemas.Token)
 async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     user = authenticate_user(db, form_data.username, form_data.password)
@@ -61,3 +95,5 @@ def create_user(user: schemas.UserBase, db: Session = Depends(get_db)):
 @app.get("/users/me/", response_model=schemas.User)
 async def read_users_me(current_user: schemas.User = Depends(get_current_active_user)):
     return schemas.User(id=current_user.id, email=current_user.email, is_active=current_user.is_active, jwk_key=current_user.jwk_key)
+
+
