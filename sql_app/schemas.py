@@ -11,6 +11,10 @@ class User(UserBase):
     jwk_key: str
 
 
+class UserActivation(UserBase):
+    activation_key: int
+
+
 class Token(BaseModel):
     access_token: str
     token_type: str
