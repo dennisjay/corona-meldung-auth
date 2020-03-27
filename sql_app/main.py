@@ -8,7 +8,7 @@ from starlette import status
 
 from config import ACCESS_TOKEN_EXPIRE_MINUTES
 from sql_app.auth import get_current_active_user, authenticate_user, create_access_token, create_login_token
-from . import crud, models, schemas
+from . import crud, models, schemas, email_utils
 from .database import engine, get_db
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -34,6 +34,7 @@ app.add_middleware(
 
 @app.post("/register", response_model=schemas.UserActivation)
 def register_user(user: schemas.UserBase, db: Session = Depends(get_db)):
+    email_utils.send_email(user.email, 'Testmail', 'Testcontent')
     db_user = crud.get_user_by_email(db, email=user.email)
     if db_user:
         raise HTTPException(status_code=400, detail="Email already registered")
