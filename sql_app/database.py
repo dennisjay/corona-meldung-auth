@@ -3,7 +3,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 import config
 
-SQLALCHEMY_DATABASE_URL = config.MYSQL_CONNECTION_URL
+SQLALCHEMY_DATABASE_URL = config.MYSQL_CONNECTION_URL if config.MYSQL_CONNECTION_URL is not None else config.POSTGRES_CONNECTION_URL
 
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
