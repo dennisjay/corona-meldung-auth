@@ -20,7 +20,7 @@ app = FastAPI()
 origins = [
     "http://localhost",
     "http://localhost:8000",
-    "http://www.corona-meldung.de"
+    "https://www.corona-meldung.de"
 ]
 
 app.add_middleware(
