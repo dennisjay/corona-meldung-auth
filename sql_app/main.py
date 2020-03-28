@@ -20,7 +20,7 @@ app = FastAPI()
 origins = [
     "http://localhost",
     "http://localhost:8000",
-    "http://corona-meldung.s3-website.eu-central-1.amazonaws.com"
+    "http://www.corona-meldung.de"
 ]
 
 app.add_middleware(
