@@ -1,11 +1,12 @@
 from datetime import datetime, timedelta
+import urllib.request
 
+import random
 import jwt
 from fastapi import Depends, FastAPI, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jwt import PyJWTError
 from passlib.context import CryptContext
-from random_word import RandomWords
 
 from sql_app import schemas
 from sql_app.database import SessionLocal, get_db
@@ -78,7 +79,19 @@ async def get_current_active_user(current_user: User = Depends(get_current_user)
 
 
 def create_login_token():
-    generator = RandomWords()
-    random_words = generator.get_random_words(limit=4)
+    random_words = generate_random_word_list(requested_number_of_words=4)
     login_token = '-'.join(random_words)
     return login_token
+
+
+def generate_random_word_list(requested_number_of_words: int):
+    word_url = "http://svnweb.freebsd.org/csrg/share/dict/words?view=co&content-type=text/plain"
+    response = urllib.request.urlopen(word_url)
+    long_txt = response.read().decode()
+    words = long_txt.splitlines()
+    word_list = [ generate_random_word_from_list(words).lower() for item in range(0, requested_number_of_words) ]
+    return word_list
+
+
+def generate_random_word_from_list(word_list):
+    return word_list[random.randint(0, len(word_list))]
