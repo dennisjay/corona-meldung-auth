@@ -93,7 +93,7 @@ def confirm_login(user: schemas.UserLogin, db: Session = Depends(get_db)):
         raise HTTPException(status_code=400, detail="User not yet activated")
 
     # Check if login token is valid and not expired
-    if not user.login_token == '' or not user.login_token == db_user.login_token:
+    if user.login_token == '' or not user.login_token == db_user.login_token:
         raise HTTPException(status_code=400, detail="Login token not valid")
     elif datetime.now() - db_user.timestamp_log_in_token > timedelta(minutes=15):
         raise HTTPException(status_code=400, detail="Login token has expired")
