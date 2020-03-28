@@ -32,7 +32,7 @@ app.add_middleware(
 )
 
 
-@app.post("/register", response_model=schemas.UserActivation)
+@app.post("/register", response_model=schemas.UserBase)
 def register_user(user: schemas.UserBase, db: Session = Depends(get_db)):
 
     db_user = crud.get_user_by_email(db, email=user.email)
@@ -44,7 +44,7 @@ def register_user(user: schemas.UserBase, db: Session = Depends(get_db)):
     activation_key = db_user.activation_key
     mail_sender.send_register_mail(user.email, activation_key)
 
-    return schemas.UserActivation(email=db_user.email, activation_key=db_user.activation_key)
+    return schemas.UserBase(email=db_user.email)
 
 
 @app.post("/confirm", response_model=schemas.User)
