@@ -82,7 +82,7 @@ def login_user(user: schemas.UserBase, db: Session = Depends(get_db)):
     return schemas.UserBase(email=db_user.email)
 
 
-@app.post("confirm_login", response_model=schemas.User)
+@app.post("/confirm_login", response_model=schemas.User)
 def confirm_login(user: schemas.UserLogin, db: Session = Depends(get_db)):
     db_user = crud.get_user_by_email(db, email=user.email)
 
