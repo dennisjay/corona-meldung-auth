@@ -17,10 +17,12 @@ def send_register_mail(receiver_email, token):
 
     # Create the plain-text and HTML version of your message
     text = """\
-    Hi,
-    How are you?
-    Real Python has many great tutorials:
-    www.realpython.com"""
+    Hallo {},
+    
+    vielen Dank für Ihr Vertrauen in https://www.corona-meldung.de .
+    
+    Ihr 4-stelliger Code zur Aktivierung ihres Accounts: {}
+    """.format(receiver_email, token)
     html = """\
     <html>
       <body>
