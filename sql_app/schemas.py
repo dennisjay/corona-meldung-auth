@@ -10,7 +10,7 @@ class UserActivation(UserBase):
 
 
 class UserLogin(UserBase):
-    login_token: int
+    login_token: str
 
 
 class User(UserBase):
