@@ -77,7 +77,7 @@ def login_user(user: schemas.UserBase, db: Session = Depends(get_db)):
     # Set login token in db and sent via Email
     login_token = create_login_token()
     crud.prepare_login(db=db, db_user=db_user, login_token=login_token)
-    print(login_token)
+    mail_sender.send_login_mail(user.email, login_token)
 
     return schemas.UserBase(email=db_user.email)
 
