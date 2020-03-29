@@ -23,7 +23,7 @@ def create_user(db: Session, user: schemas.UserBase):
     key = jwk.JWK.generate(kty='oct', size=256)
     key_json_str = key.export()
     activation_key = randint(1000, 9999)
-    pseudonym = str(uuid.v4())
+    pseudonym = str(uuid.uuid4())
 
     db_user = models.User(email=user.email, jwk_key=key_json_str, activation_key=activation_key, pseudonym=pseudonym)
     db.add(db_user)
