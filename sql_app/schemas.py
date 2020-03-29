@@ -9,11 +9,11 @@ class UserBase(UserMail):
     pseudonym: str
 
 
-class UserActivation(UserBase):
+class UserActivation(UserMail):
     activation_key: int
 
 
-class UserLogin(UserBase):
+class UserLogin(UserMail):
     login_token: str
 
 
