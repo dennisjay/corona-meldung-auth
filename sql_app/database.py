@@ -3,12 +3,21 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 import config
 
-SQLALCHEMY_DATABASE_URL = config.MYSQL_CONNECTION_URL if config.MYSQL_CONNECTION_URL is not None else config.POSTGRES_CONNECTION_URL
+SQLALCHEMY_DATABASE_URL = 'sqlite:///test.db'
+if config.MYSQL_CONNECTION_URL is not None:
+    print("Using MySQL")
+    SQLALCHEMY_DATABASE_URL = config.MYSQL_CONNECTION_URL
+elif config.POSTGRES_CONNECTION_URL is not None:
+    print("Using postgres")
+    SQLALCHEMY_DATABASE_URL = config.POSTGRES_CONNECTION_URL
+else:
+    print("Using SQLLITE")
 
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base()
+
 
 # Dependency
 def get_db():

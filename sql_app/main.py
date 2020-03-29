@@ -1,16 +1,12 @@
 from datetime import timedelta, datetime
-from typing import List
 
 from fastapi import Depends, FastAPI, HTTPException
-from fastapi.security import OAuth2PasswordRequestForm
+from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
-from starlette import status
 
-from config import ACCESS_TOKEN_EXPIRE_MINUTES
-from sql_app.auth import get_current_active_user, authenticate_user, create_access_token, create_login_token
+from sql_app.auth import create_login_token
 from . import crud, models, schemas, mail_sender
 from .database import engine, get_db
-from fastapi.middleware.cors import CORSMiddleware
 
 models.Base.metadata.create_all(bind=engine)
 

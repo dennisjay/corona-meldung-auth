@@ -49,7 +49,7 @@ def prepare_login(db: Session, db_user: models.User, login_token: str):
 def login_user(db: Session, db_user: models.User):
     db_user.logged_in = True
     db_user.login_token = ''
-    db_user.timestamp_log_in_token = datetime.min()
+    db_user.timestamp_log_in_token = datetime.min
     db.commit()
     db.refresh(db_user)
     return db_user
