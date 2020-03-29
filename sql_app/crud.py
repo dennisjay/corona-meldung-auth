@@ -41,6 +41,8 @@ def activate_user(db: Session, db_user: models.User):
 def prepare_login(db: Session, db_user: models.User, login_token: str):
     db_user.login_token = login_token
     db_user.timestamp_log_in_token = datetime.now()
+    db.commit()
+    db.refresh(db_user)
     return db_user
 
 
