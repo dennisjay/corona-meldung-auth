@@ -27,7 +27,7 @@ app.add_middleware(
 )
 
 
-@app.get("/user_count, response_model=schemas.UserCount")
+@app.get("/user_count", response_model=schemas.UserCount)
 def user_count(db: Session = Depends(get_db)):
     user_count = crud.count_users(db)
     return schemas.UserCount(user_count=user_count)
