@@ -13,6 +13,10 @@ from sql_app.database import SessionLocal, get_db
 from .models import *
 from . import crud
 
+word_url = "http://svnweb.freebsd.org/csrg/share/dict/words?view=co&content-type=text/plain"
+response = urllib.request.urlopen(word_url)
+long_txt = response.read().decode()
+words = long_txt.splitlines()
 
 # to get a string like this run:
 # openssl rand -hex 32
@@ -52,7 +56,7 @@ def create_access_token(*, data: dict, expires_delta: timedelta = None):
     return encoded_jwt
 
 
-async def get_current_user(token: str = Depends(oauth2_scheme), db= Depends(get_db)):
+async def get_current_user(token: str = Depends(oauth2_scheme), db=Depends(get_db)):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
@@ -85,11 +89,8 @@ def create_login_token():
 
 
 def generate_random_word_list(requested_number_of_words: int):
-    word_url = "http://svnweb.freebsd.org/csrg/share/dict/words?view=co&content-type=text/plain"
-    response = urllib.request.urlopen(word_url)
-    long_txt = response.read().decode()
-    words = long_txt.splitlines()
-    word_list = [ generate_random_word_from_list(words).lower() for item in range(0, requested_number_of_words) ]
+    global words  # use words from ram to speedup endpoint
+    word_list = [generate_random_word_from_list(words).lower() for item in range(0, requested_number_of_words)]
     return word_list
 
 
