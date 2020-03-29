@@ -34,7 +34,7 @@ def user_count(db: Session = Depends(get_db)):
 
 
 @app.post("/register", response_model=schemas.UserBase)
-def register_user(user: schemas.UserBase, db: Session = Depends(get_db)):
+def register_user(user: schemas.UserMail, db: Session = Depends(get_db)):
     db_user = crud.get_user_by_email(db, email=user.email)
     if db_user:
         # Status Code 409 for Conflict
@@ -71,7 +71,7 @@ def confirm_user(user: schemas.UserActivation, db: Session = Depends(get_db)):
 
 
 @app.post("/login", response_model=schemas.UserBase)
-def login_user(user: schemas.UserBase, db: Session = Depends(get_db)):
+def login_user(user: schemas.UserMail, db: Session = Depends(get_db)):
     db_user = crud.get_user_by_email(db, email=user.email)
     if not db_user:
         raise HTTPException(status_code=400, detail="Email not registered")
