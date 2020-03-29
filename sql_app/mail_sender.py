@@ -11,7 +11,7 @@ def send_register_mail(receiver_email, token):
     from email.mime.multipart import MIMEMultipart
 
     message = MIMEMultipart("alternative")
-    message["Subject"] = "Verifizierungscode"
+    message["Subject"] = "Dein Code zur Aktivierung des Accounts auf corona-meldung.de"
     message["From"] = config.EMAIL_ADDRESS
     message["To"] = receiver_email
 
@@ -55,7 +55,7 @@ def send_login_mail(receiver_email, token):
     from email.mime.multipart import MIMEMultipart
 
     message = MIMEMultipart("alternative")
-    message["Subject"] = "multipart test"
+    message["Subject"] = "Ihr Code zum Login bei https://www.corona-meldung.de"
     message["From"] = config.EMAIL_ADDRESS
     message["To"] = receiver_email
 
