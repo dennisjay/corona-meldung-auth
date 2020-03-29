@@ -11,7 +11,7 @@ def send_register_mail(receiver_email, token):
     from email.mime.multipart import MIMEMultipart
 
     message = MIMEMultipart("alternative")
-    message["Subject"] = "multipart test"
+    message["Subject"] = "Verifizierungscode"
     message["From"] = config.EMAIL_ADDRESS
     message["To"] = receiver_email
 
@@ -19,16 +19,16 @@ def send_register_mail(receiver_email, token):
     text = """\
     Hallo {},
     
-    vielen Dank für Ihr Vertrauen in https://www.corona-meldung.de .
+    vielen Dank für dein Vertrauen in https://www.corona-meldung.de .
     
-    Ihr 4-stelliger Code zur Aktivierung ihres Accounts: {}
+    Dein Code zur Aktivierung deines Accounts: {}
     """.format(receiver_email, token)
     html = """\
     <html>
       <body>
-        <p>Hallo {},<br>
-           vielen Dank für Ihr Vertrauen in https://www.corona-meldung.de .<br/><br/>
-           Ihr 4-stelliger Code zur Aktivierung ihres Accounts: {}
+        <p>Hallo {},<br/><br/>
+           vielen Dank für dein Vertrauen in https://www.corona-meldung.de .<br/><br/>
+           Dein Code zur Aktivierung deines Accounts: <b>{}</b>
         </p>
       </body>
     </html>
