@@ -2,6 +2,7 @@ from random import randint
 from sqlalchemy.orm import Session
 from jwcrypto import jwk
 from datetime import datetime
+import uuid
 
 from . import models, schemas
 
@@ -22,8 +23,9 @@ def create_user(db: Session, user: schemas.UserBase):
     key = jwk.JWK.generate(kty='oct', size=256)
     key_json_str = key.export()
     activation_key = randint(1000, 9999)
+    pseudonym = str(uuid.v4())
 
-    db_user = models.User(email=user.email, jwk_key=key_json_str, activation_key=activation_key)
+    db_user = models.User(email=user.email, jwk_key=key_json_str, activation_key=activation_key, pseudonym=pseudonym)
     db.add(db_user)
     db.commit()
     db.refresh(db_user)

@@ -3,6 +3,7 @@ from pydantic import BaseModel
 
 class UserBase(BaseModel):
     email: str
+    pseudonym: str
 
 
 class UserActivation(UserBase):

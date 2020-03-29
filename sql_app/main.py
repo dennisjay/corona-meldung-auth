@@ -45,7 +45,7 @@ def register_user(user: schemas.UserBase, db: Session = Depends(get_db)):
     activation_key = db_user.activation_key
     mail_sender.send_register_mail(user.email, activation_key)
 
-    return schemas.UserBase(email=db_user.email)
+    return schemas.UserBase(email=db_user.email, pseudonym=db_user.pseudonym)
 
 
 @app.post("/confirm", response_model=schemas.User)
@@ -64,7 +64,8 @@ def confirm_user(user: schemas.UserActivation, db: Session = Depends(get_db)):
 
     # Check if activation worked
     if crud.activate_user(db=db, db_user=db_user):
-        return schemas.User(id=db_user.id, email=db_user.email, is_active=db_user.is_active, jwk_key=db_user.jwk_key)
+        return schemas.User(id=db_user.id, email=db_user.email,pseudonym=db_user.pseudonym,
+                            is_active=db_user.is_active, jwk_key=db_user.jwk_key)
     else:
         raise HTTPException(status_code=400, detail="Could not activate user")
 
@@ -80,7 +81,7 @@ def login_user(user: schemas.UserBase, db: Session = Depends(get_db)):
     crud.prepare_login(db=db, db_user=db_user, login_token=login_token)
     mail_sender.send_login_mail(user.email, login_token)
 
-    return schemas.UserBase(email=db_user.email)
+    return schemas.UserBase(email=db_user.email, pseudonym=db_user.pseudonym)
 
 
 @app.post("/confirmlogin", response_model=schemas.User)
@@ -101,6 +102,7 @@ def confirm_login(user: schemas.UserLogin, db: Session = Depends(get_db)):
 
     # Check if login worked
     if crud.login_user(db=db, db_user=db_user):
-        return schemas.User(id=db_user.id, email=db_user.email, is_active=db_user.is_active, jwk_key=db_user.jwk_key)
+        return schemas.User(id=db_user.id, email=db_user.email, pseudonym=db_user.pseudonym,
+                            is_active=db_user.is_active, jwk_key=db_user.jwk_key)
     else:
         raise HTTPException(status_code=400, detail="Could not activate user")

@@ -8,6 +8,7 @@ class User(Base):
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, index=True)
+    pseudonym = Column(String(255), unique=True, index=True)
     email = Column(String(255), unique=True, index=True)
     is_active = Column(Boolean, default=False)
     activation_key = Column(Integer)
