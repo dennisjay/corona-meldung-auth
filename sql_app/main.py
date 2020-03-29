@@ -36,6 +36,13 @@ def user_count(db: Session = Depends(get_db)):
 @app.post("/register", response_model=schemas.UserBase)
 def register_user(user: schemas.UserMail, db: Session = Depends(get_db)):
     db_user = crud.get_user_by_email(db, email=user.email)
+
+    if db_user and not db_user.is_active:
+        # Reset inactive Users on second register
+        db.delete(db_user)
+        db.commit()
+        db_user = None
+
     if db_user:
         # Status Code 409 for Conflict
         raise HTTPException(status_code=409, detail="Email already registered")
