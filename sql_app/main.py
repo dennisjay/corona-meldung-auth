@@ -27,6 +27,12 @@ app.add_middleware(
 )
 
 
+@app.get("/user_count, response_model=schemas.UserCount")
+def user_count(db: Session = Depends(get_db)):
+    user_count = crud.count_users(db)
+    return schemas.UserCount(user_count=user_count)
+
+
 @app.post("/register", response_model=schemas.UserBase)
 def register_user(user: schemas.UserBase, db: Session = Depends(get_db)):
     db_user = crud.get_user_by_email(db, email=user.email)
