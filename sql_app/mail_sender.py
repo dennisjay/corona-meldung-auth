@@ -44,7 +44,7 @@ def send_register_mail(receiver_email, token):
     message.attach(html_content)
 
     with smtplib.SMTP_SSL(config.EMAIL_SMTP_SERVER, 465, context=context) as server:
-        server.login(config.EMAIL_ADDRESS, config.EMAIL_SMTP_PASSWORD)
+        server.login(config.EMAIL_USER_NAME, config.EMAIL_SMTP_PASSWORD)
         server.sendmail(
             config.EMAIL_ADDRESS, receiver_email, message.as_string()
         )
@@ -88,7 +88,11 @@ def send_login_mail(receiver_email, token):
     message.attach(html_content)
 
     with smtplib.SMTP_SSL(config.EMAIL_SMTP_SERVER, 465, context=context) as server:
-        server.login(config.EMAIL_ADDRESS, config.EMAIL_SMTP_PASSWORD)
+        server.login(config.EMAIL_USER_NAME, config.EMAIL_SMTP_PASSWORD)
         server.sendmail(
             config.EMAIL_ADDRESS, receiver_email, message.as_string()
         )
+
+if __name__ == '__main__':
+    send_login_mail(  'djprivat@gmail.com', 'hello world');
+    send_register_mail(  'djprivat@gmail.com', 'hello world 2');
