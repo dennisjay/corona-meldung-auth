@@ -14,7 +14,7 @@ else:
     print("Using SQLLITE")
 
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
-SessionLocal = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine))
+SessionLocal = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine, pool_pre_ping=True))
 
 Base = declarative_base()
 
