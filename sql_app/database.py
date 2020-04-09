@@ -13,8 +13,8 @@ elif config.POSTGRES_CONNECTION_URL is not None:
 else:
     print("Using SQLLITE")
 
-engine = create_engine(SQLALCHEMY_DATABASE_URL)
-SessionLocal = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine, pool_pre_ping=True))
+engine = create_engine(SQLALCHEMY_DATABASE_URL, pool_pre_ping=True)
+SessionLocal = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine))
 
 Base = declarative_base()
 
