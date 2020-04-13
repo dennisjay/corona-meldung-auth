@@ -55,7 +55,7 @@ def send_login_mail(receiver_email, token):
     from email.mime.multipart import MIMEMultipart
 
     message = MIMEMultipart("alternative")
-    message["Subject"] = "Ihr Code zum Login bei https://www.corona-meldung.de"
+    message["Subject"] = "Dein Code zum Login bei https://www.corona-meldung.de"
     message["From"] = config.EMAIL_ADDRESS
     message["To"] = receiver_email
 
@@ -63,15 +63,15 @@ def send_login_mail(receiver_email, token):
     text = """\
     Hallo {},
 
-    Ihr Code zum Login bei https://www.corona-meldung.de :
+    Dein Code zum Login bei https://www.corona-meldung.de :
     
     Code: {}
     """.format(receiver_email, token)
     html = """\
     <html>
       <body>
-        <p>Hallo {},<br>
-           Ihr Code zum Login bei https://www.corona-meldung.de :<br/><br/>
+        <p>Hallo {},<br><br>
+           Dein Code zum Login bei https://www.corona-meldung.de :<br/><br/>
            Code: {}
         </p>
       </body>
